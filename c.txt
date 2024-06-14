@@ -1,0 +1,223 @@
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+#define OK 1
+#define ERROR 0
+#define TRUE 1
+#define FALSE 0
+#define OVERFLOW -1
+#define STACK_INIT_SIZE 50
+#define SPACEINCREMENT 10
+
+
+
+{
+    if (Operator == '(')
+    {
+        return 0;
+    }
+    if (Operator == '+' || Operator == '-')
+    {
+        return 1;
+    }
+    if (Operator == '*' || Operator == '/')
+    {
+        return 2;
+    }
+    if (Operator == '^')
+    {
+        return 3;
+    }
+} //优先值越大，优先级越高
+
+NumType Calculate(NumType n1, NumType n2, char operator)
+{
+    switch (operator)
+    {
+    case '+':
+        return n2 + n1;
+        break;
+    case '-':
+        return n2 - n1;
+        break;
+    case '*':
+        return n2 * n1;
+        break;
+    case '/':
+        if (n1 == 0)
+        {
+            DivERROR = TRUE;
+        }
+        return n2 / n1;
+        break;
+    case '^':
+        return pow(n2, n1);
+    default:
+        return ERROR;
+    }
+}
+
+Status Operate(char *Operation)
+{
+    NumStack NS;
+    OptStack OS;
+    NumStack *NSP = &NS;
+    OptStack *OSP = &OS;
+
+    Status Dot = FALSE;
+    Status Optrear = TRUE;
+    Status Numrear = FALSE;
+    int Dotcount = 0;
+    NumType rn = 0;
+    NumType *rnp = &rn;
+
+    NumType num_1;
+    NumType num_2;
+    NumType *pn1 = &num_1;
+    NumType *pn2 = &num_2;
+
+    ElemType TempOpetator;
+    ElemType RearOperator;
+    ElemType *TempOP = &TempOpetator; //用于最后清栈的运算符
+    ElemType *ROP = &RearOperator;    //用于与入栈运算符比较的运算符
+
+    InitOS(OSP);
+    InitNS(NSP);
+
+    while (*Operation != '\0')
+    {
+        if (*Operation == '.')
+        {
+            if (Dot == FALSE)
+            {
+                Dot = TRUE; //后方为小数点输入,直到再次读到运算符
+            }
+            else if (Dot == TRUE)
+            {
+                printf("ERROR_2");
+                return ERROR;
+            }
+        }
+        else if (*Operation >= '0' && *Operation <= '9')
+        {
+            if (Dot == TRUE)
+            {
+                Dotcount++;
+                NSPop(NSP, rnp);
+                NSPush(NSP, rn + ConvertNUM(*Operation) * pow(0.1, Dotcount));
+            }
+            else if (Numrear == TRUE)
+            {
+                NSPop(NSP, rnp);
+                NSPush(NSP, rn * 10 + ConvertNUM(*Operation));
+            }
+            else
+            {
+                NSPush(NSP, ConvertNUM(*Operation));
+                Numrear = TRUE;
+            }
+
+            Optrear = FALSE;
+        }
+        else if (!EmptyStack(OS))
+        {
+            // if(Optrear == TRUE && *Operation != '('){
+            //     printf("ERROR_2");
+            //     return ERROR;
+            // }//非法性检测
+
+            OSPop(OSP, ROP);
+            if (*Operation == ')')
+            {
+                while (*ROP != '(')
+                {
+                    NSPop(NSP, pn1);
+                    NSPop(NSP, pn2);
+                    NSPush(NSP, Calculate(*pn1, *pn2, *ROP));
+                    OSPop(OSP, ROP);
+                }
+                if (EmptyStack(OS))
+                {
+                    Operation++;
+                    break;
+                }
+            }
+            else if (PriorVal(*ROP) >= PriorVal(*Operation) && *Operation != '(')
+            {
+                do
+                {
+                    NSPop(NSP, pn1);
+                    NSPop(NSP, pn2);
+                    NSPush(NSP, Calculate(*pn1, *pn2, *ROP));
+                    if (!EmptyStack(OS))
+                    {
+                        OSPop(OSP, ROP);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                } while (PriorVal(*ROP) >= PriorVal(*Operation)); //解决形如2*3^2+1的问题
+            }
+            else
+            {
+                OSPush(OSP, *ROP);
+            }
+            if (*Operation != ')')
+            {
+                OSPush(OSP, *Operation);
+            }
+
+            Numrear = FALSE;
+            Optrear = TRUE;
+            Dot = FALSE;
+            Dotcount = 0;
+        }
+        else
+        {
+            // if(Optrear == TRUE && *Operation != '('){
+            //     printf("ERROR_2");
+            //     return ERROR;
+            // }
+
+            OSPush(OSP, *Operation);
+
+            Numrear = FALSE;
+            Optrear = TRUE;
+            Dot = FALSE;
+            Dotcount = 0;
+        }
+        Operation++;
+    }
+    while (!EmptyStack(OS))
+    {
+        NSPop(NSP, pn1);
+        NSPop(NSP, pn2);
+        OSPop(OSP, TempOP);
+        NSPush(NSP, Calculate(*pn1, *pn2, *TempOP));
+    }
+    NSPop(NSP, pn1);
+    if (DivERROR)
+    {
+        printf("ERROR_3");
+        return ERROR;
+    }
+    printf("%g\n", *pn1);
+}
+
+int main(void)
+{
+    Operate("1+2+3+4");
+    Operate("10-8-7-6");
+    Operate("1*2*3*4");
+    Operate("8/2/2/2");
+    Operate("3^2+4^2*2");
+    Operate("(3+2)*2/(4-1+2)");
+    Operate("3/5");
+    Operate("3/0.6");
+    Operate("(1++3)");
+    Operate("2/(5-5)");
+    return 0;
+}

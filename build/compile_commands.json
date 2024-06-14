@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/wizbird/Code/Stack_experiment/build",
+  "command": "/usr/bin/g++    -g   -o CMakeFiles/StackOperation.dir/main.cpp.o -c /home/wizbird/Code/Stack_experiment/main.cpp",
+  "file": "/home/wizbird/Code/Stack_experiment/main.cpp"
+}
+]

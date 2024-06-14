@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/wizbird/Code/Stack_experiment/main.cpp
+iostream
+-
+math.h
+-
+stdio.h
+-
+stdlib.h
+-
+

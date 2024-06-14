@@ -1,0 +1,1 @@
+/usr/bin/g++  -g  -rdynamic CMakeFiles/StackOperation.dir/main.cpp.o  -o StackOperation 

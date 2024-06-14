@@ -1,0 +1,9 @@
+# ninja log v5
+0	186	1715763508100000189	CMakeFiles/StackOperation.dir/main.cpp.o	ac3a2b1e76fb4c74
+186	226	1715763508139999975	StackOperation	3d75f5a737e132ce
+0	177	1716020770854539040	CMakeFiles/StackOperation.dir/main.cpp.o	ac3a2b1e76fb4c74
+177	226	1716020770902543755	StackOperation	3d75f5a737e132ce
+1	196	1716020776451075225	CMakeFiles/StackOperation.dir/main.cpp.o	ac3a2b1e76fb4c74
+196	243	1716020776495079348	StackOperation	3d75f5a737e132ce
+0	200	1716020783731739229	CMakeFiles/StackOperation.dir/main.cpp.o	ac3a2b1e76fb4c74
+200	248	1716020783775743142	StackOperation	3d75f5a737e132ce
